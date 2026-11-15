@@ -1,39 +1,62 @@
-# Worked examples — PXJ@8 ledger
+# Worked examples — token balance ledger
 
-`1.00000000 PXJ` = `100_000_000n` units. Composition uses a three-account book.
+Amounts are integer minor units. **PXJ precision is 8**, so `1.00000000 PXJ` is `100_000_000n`. Issuer in the tests is `tokenissuer`. After every successful step, `sumBalances(L) === L.supply`.
 
-## Example A — mint path
+## Open and close
 
-```text
-L = createLedger("PXJ", 8, 1_000_000_000_00000000n, "issuer")
-L = open(L, "alice")
-L = issueTo(L, "issuer", "alice", 100_000_000n)
-sumBalances === supply === 100_000_000n
-```
+`open` creates a row at `0n`. `close` deletes it only at zero.
 
-## Example B — hop and conserve
+| Call | Result |
+| --- | --- |
+| `open` alice twice | `already open` |
+| issue `1n`, then `close` alice | `balance not zero` |
+| `close` an account that was never opened | `not open` |
 
-```text
-open bob; transfer alice → bob 40_000_000n
-alice 60M, bob 40M, supply still 100M
-```
+Opening one past `MAX_ACCOUNTS` throws `too many accounts`. Names in that test are built from `a-z` and `1-5` only.
 
-## Example C — failed overdraft
-
-Alice tries to send `60_000_001n` → throws; balances unchanged.
-
-## Example D — retire and close
+## Issue, transfer, retire
 
 ```text
-retireFrom(alice, 60_000_000n) as alice or issuer
-alice balance 0 → close(alice)
-supply decreased by 60M
+issue 100 to alice
+transfer 40 alice → bob
+→ alice 60, bob 40, supply 100
 ```
 
-## Example E — third party cannot retire
+```text
+issue 50 to alice
+retire 20 from alice (called by alice)
+→ balance 30, supply 30
+```
 
-`retireFrom` with caller `carol` on alice’s row → refused (unless carol is issuer).
+| Call | Result |
+| --- | --- |
+| `issueTo` by alice, not the issuer | `only issuer` |
+| transfer `11` when alice has `10` | `exceeds balance` |
+| transfer to bob while bob is not open | `recipient not open` |
+| transfer alice → alice | `must differ` |
+| symbol `AAA`, precision `0`, maxSupply `10`, issue `11` | `maxSupply` |
+| issue to an unopened account | `not open` |
+| issue, transfer, or retire `0n` | `positive` |
 
-## Example F — non-open recipient
+An overdraft throws and leaves the previous ledger: supply `40`, alice `40`, bob `0`. A following transfer of the full `40` keeps supply at `40`.
 
-Issue or transfer to closed account → refused.
+## Full PXJ lifecycle (composition)
+
+`one = 100_000_000n` (one whole PXJ).
+
+| Step | Balances | Supply |
+| --- | --- | --- |
+| Open alice, bob, treasury | all `0` | `0` |
+| Issue `10 * one` to alice | alice 10 PXJ | 10 PXJ |
+| Alice → bob `3 * one` | alice 7, bob 3 | 10 |
+| Bob → treasury `1 * one` | bob 2, treasury 1 | 10 |
+| Treasury retires its 1 | treasury 0 | 9 |
+| Close treasury | row gone | 9 |
+| Issuer retires alice's 7; bob retires his 2 | both 0 | 0 |
+| Close alice and bob | no rows | 0 |
+
+Carol cannot `retireFrom` alice's `50n` (`only issuer or holder`). Alice's balance stays `50`.
+
+## What this is not
+
+No `require_auth`, no RAM payer, no memo, no wasm. The virtual-balance lab is the one that **forbids** peer transfer. This one allows it and conserves supply.
