@@ -24,7 +24,7 @@
 | --- | --- |
 | [virtual balance](https://github.com/pixel-journey/px-game-virtual-balance-ledger) | Points; peer transfer disabled |
 | [transfer tax](https://github.com/pixel-journey/px-token-transfer-tax-burn-treasury) | Tax + burn supply |
-| [dust](https://github.com/pixel-journey/px-token-dust-truncation-visualizer) | Integer dust |
+| integer dust | still a private lab (`px-token-dust-truncation-visualizer`); not part of this public set |
 | [pausable](https://github.com/pixel-journey/px-token-pausable-emergency-guard) | Pause transfers |
 | [memo router](https://github.com/pixel-journey/px-memo-action-router) | Memo grammar |
 | [invariant kit](https://github.com/pixel-journey/px-invariant-kit) | Shared quantity / name gates |

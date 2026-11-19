@@ -39,4 +39,4 @@ A refused path must leave the book unchanged. Open → issue → transfer → re
 
 ## Honesty limits
 
-Pure TypeScript conservation book. Not a deployed token. Reference shape: [eosio.token](https://github.com/eosio/eosio.contracts). Path: [treasury learning path](https://github.com/pixel-journey/px-contract-examples-vault/blob/main/docs/TREASURY-TOKEN-LEARNING-PATH.md).
+Pure TypeScript conservation book. Not a deployed token. Reference shape: [eosio.token](https://github.com/eosio/eosio.contracts). Path: `px-contract-examples-vault` (private; not this public course).
