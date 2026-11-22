@@ -8,6 +8,7 @@
 | [docs.wax.io](https://docs.wax.io/) | WAX development |
 | [docs.eosnetwork.com](https://docs.eosnetwork.com/) | Actions, permissions, asset type |
 | [WAX API reference](https://docs.wax.io/build/api-reference/) | Chain reads |
+| [ANTELOPE-PORTABILITY](https://github.com/pixel-journey/px-contract-examples-vault/blob/main/docs/ANTELOPE-PORTABILITY.md) | Integer rules vs chain-local names |
 
 ## Product facts locked by tests
 
@@ -17,6 +18,10 @@
 - Overdraft, self-transfer, and non-issuer issue are refused and leave the ledger unchanged.
 - **PXJ precision is always 8** in Pixel Journey product labs. `1.00000000 PXJ` = `100_000_000` minor units.
 - Peer transfer is **allowed** here. The opposite product is [virtual balance](https://github.com/pixel-journey/px-game-virtual-balance-ledger).
+
+## Portability
+
+`sum(balances) === supply`, open-before-credit, and close-at-zero port to any Antelope token book after you change symbol, precision, and contract account. EOS system token is precision 4. Do not "fix" dust by lowering PXJ precision.
 
 ## Related labs
 
